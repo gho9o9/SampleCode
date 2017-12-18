@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------
--- 管理者で実行：Python/Rプロシージャ定義
+-- 管理者で実行：Python/Rプロシージャ定義 ＆ デモ用一般ユーザの作成
 ------------------------------------------------------------------------
 USE [sql17mlhandson]
 GO
@@ -15,12 +15,6 @@ EXEC sp_execute_external_script
 END 
 GO
 
-EXEC access_control_demo
-GO
-
-------------------------------------------------------------------------
--- 管理者で実行：デモ用一般ユーザの作成
-------------------------------------------------------------------------
 USE [master]
 GO
 
@@ -33,10 +27,32 @@ GO
 CREATE USER [public_user] FOR LOGIN [public_user]
 GO
 
+
+------------------------------------------------------------------------
+-- 管理者で実行：Python/Rプロシージャの実行と実装参照（成功する）
+------------------------------------------------------------------------
+USE [sql17mlhandson]
+GO
+
+-- Python/Rプロシージャの実行
+EXEC access_control_demo
+GO
+
+-- 実装の参照（方法１）
+EXEC sp_helptext 'access_control_demo';
+GO
+
+-- 実装の参照（方法２）
+SELECT definition FROM sys.sql_modules
+WHERE object_id = OBJECT_ID('access_control_demo');
+GO
+
 ------------------------------------------------------------------------
 -- 一般ユーザで実行：Python/Rプロシージャの実行と実装参照（失敗する）
 ------------------------------------------------------------------------
 USE [sql17mlhandson]
+GO
+EXECUTE AS USER = 'public_user'
 GO
 
 -- Python/Rプロシージャの実行
@@ -59,6 +75,8 @@ GO
 ------------------------------------------------------------------------
 USE [sql17mlhandson] 
 GO
+REVERT
+GO
 
 -- プロシージャ実行権付与
 GRANT EXECUTE ON access_control_demo TO [public_user]
@@ -77,6 +95,8 @@ GRANT VIEW DEFINITION TO [public_user]
 ------------------------------------------------------------------------
 USE [sql17mlhandson]
 GO
+EXECUTE AS USER = 'public_user'
+GO
 
 -- Python/Rプロシージャの実行
 EXEC access_control_demo
@@ -89,6 +109,9 @@ GO
 -- 実装の参照（方法２）
 SELECT definition FROM sys.sql_modules
 WHERE object_id = OBJECT_ID('access_control_demo');
+GO
+
+REVERT
 GO
 
 -- SUCCESS

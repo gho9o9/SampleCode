@@ -1,3 +1,6 @@
+USE [sql17mlhandson]
+GO
+
 CREATE PROCEDURE MyProc(@input varchar(10), @output int OUTPUT) AS
 BEGIN
   EXEC sp_execute_external_script
