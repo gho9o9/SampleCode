@@ -1,5 +1,7 @@
 ﻿use demodb
 go
+
+/*
 DROP procedure IF EXISTS [dbo].[initialize]
 go
 CREATE   procedure [dbo].[initialize]
@@ -19,6 +21,7 @@ DBCC FREEPROCCACHE;
 ALTER DATABASE current SET QUERY_STORE CLEAR ALL;
 end
 GO
+*/
 
 DROP PROCEDURE IF EXISTS [dbo].[report]
 go

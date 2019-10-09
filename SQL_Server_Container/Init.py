@@ -72,7 +72,28 @@ sudo docker cp /tmp/WideWorldImporters-Full.bak sqlautotune:/tmp/WideWorldImport
 rm /tmp/WideWorldImporters-Full.bak
 
 #%% [markdown]
+# ### デモ用クエリダウンロード
+%%bash
+cd ~/SQL_Server_Container
+# apt instal subversion
+sudo rm -rf ~/SQL_Server_Container/SQL_Server_Autotune
+svn export https://github.com/gho9o9/SampleCode/trunk/SQL_Server_Autotune
+
+#%% [markdown]
 # ### テストデータリストア
 %%bash
-sudo docker exec sqlautotune /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P P@ssw0rd -Q "RESTORE DATABASE [WideWorldImporters-Full] FROM DISK = N'/tmp/WideWorldImporters-Full.bak' WITH MOVE 'WWI_Primary' TO '/var/opt/mssql/data/WideWorldImporters.mdf', MOVE 'WWI_UserData' TO '/var/opt/mssql/data/WideWorldImporters_UserData.ndf', MOVE 'WWI_Log' TO '/var/opt/mssql/data/WideWorldImporters.ldf', MOVE 'WWI_InMemory_Data_1' TO '/var/opt/mssql/data/WideWorldImporters_InMemory_Data_1', FILE = 1, NOUNLOAD, REPLACE, STATS = 5"
-sudo docker exec sqlautotune /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P P@ssw0rd -Q 'select name from sys.databases'
+sqlcmd -S localhost,61433 -U sa -P P@ssw0rd \ 
+    -i ~/SQL_Server_Container/SQL_Server_Autotune/0.restorewwi_linux.sql
+sqlcmd -S localhost,61433 -U sa -P P@ssw0rd \ 
+    -Q 'select name from sys.databases'
+# sudo docker exec sqlautotune /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P P@ssw0rd -Q "RESTORE DATABASE [demodb] FROM DISK = N'/tmp/WideWorldImporters-Full.bak' WITH MOVE 'WWI_Primary' TO '/var/opt/mssql/data/WideWorldImporters.mdf', MOVE 'WWI_UserData' TO '/var/opt/mssql/data/WideWorldImporters_UserData.ndf', MOVE 'WWI_Log' TO '/var/opt/mssql/data/WideWorldImporters.ldf', MOVE 'WWI_InMemory_Data_1' TO '/var/opt/mssql/data/WideWorldImporters_InMemory_Data_1', FILE = 1, NOUNLOAD, REPLACE, STATS = 5"
+# sudo docker exec sqlautotune /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P P@ssw0rd -Q 'select name from sys.databases'
+
+#%% [markdown]
+# ### デモ用プロシージャ定義
+%%bash
+sqlcmd -S localhost,61433 -U sa -P P@ssw0rd \
+  -i ~/SQL_Server_Container/SQL_Server_Autotune/1.setup.sql
+
+
+#%%

@@ -231,9 +231,57 @@ sqlcmd -S localhost,11433 -U sa -P P@ssw0rd -Q 'RESTORE DATABASE [DevDB] FROM DI
 %%bash
 sqlcmd -S localhost,11433 -U sa -P P@ssw0rd -Q 'use DevDB; select * from tab01'
 
+#%% [markdown]
+# # Demo 7: AutoTuning
+# ## プロシージャ定義
+%%bash
+sqlcmd -S localhost,61433 -U sa -P P@ssw0rd \
+  -i ~/SQL_Server_Container/SQL_Server_Autotune/1.setup.sql
 
+#%% [markdown]
+# ## 初期化
+%%bash
+sudo docker restart sqlautotune
+sleep 10
+sqlcmd -S localhost,61433 -U sa -P P@ssw0rd \
+  -i ~/SQL_Server_Container/SQL_Server_Autotune/2.initialize.sql
 
-• AutoTuning
+#%% [markdown]
+# ## Azure Data Studio でスループット収集
+%%bash
+sqlcmd -S localhost,61433 -U sa -P P@ssw0rd \
+  -i ~/SQL_Server_Container/SQL_Server_Autotune/3.batchrequests_perf_collector.sql
+
+#%% [markdown]
+# ## ワークロード実行
+%%bash
+sqlcmd -S localhost,61433 -U sa -P P@ssw0rd \
+  -i ~/SQL_Server_Container/SQL_Server_Autotune/4.report.sql
+
+#%% [markdown]
+# ## Azure Data Studio でスループット推移を確認
+# SELECT counter_name, [retrieval_time],
+#   CASE WHEN LAG(cntr_value,1) OVER (ORDER BY [retrieval_time]) IS NULL THEN  
+#       cntr_value-cntr_value
+#   ELSE cntr_value - LAG(cntr_value,1) OVER (ORDER BY [retrieval_time]) END AS cntr_value
+# FROM ##tblPerfCount
+# ORDER BY [retrieval_time] DESC
+# ![](image/2019-10-08-23-29-40.png)
 
 
 #%%
+
+
+		sudo docker restart sql19rc1
+		2.initialize
+		3.batchrequests_perf_collector
+		4.report
+		<ここまでの処理を解説>
+		5.batchrequests
+		<スループット推移を確認>
+		6.regression
+		<回帰の説明>
+		7.recommendations
+		<stateの確認＆recommendationsのクエリ実行>
+		5.batchrequests
+<手動チューニングが効いてスループットが改善することを確認>
