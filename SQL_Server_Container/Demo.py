@@ -31,26 +31,26 @@ sudo docker image list | grep 2017-CU16
 #%% [markdown]
 # ## 1-2.SQL Server 2017コンテナ起動
 %%bash
-sudo docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=P@ssw0rd' -p 11433:1433 -v ~/SQL_Server_Container/DataVolume:/var/opt/mssql --name sql17cu16 -d mcr.microsoft.com/mssql/server:2017-CU16
+sudo docker run -e ACCEPT_EULA=Y -e MSSQL_SA_PASSWORD=$PASSWORD -p 11433:1433 -v ~/SQL_Server_Container/DataVolume:/var/opt/mssql --name sql17cu16 -d mcr.microsoft.com/mssql/server:2017-CU16
 sudo docker ps -a --filter name=sql17cu16
 sleep 30
 
 #%% [markdown]
 # ## 1-3.コンテナ内でsqlcmdを実行（コンテナ内は1433ポートでリッスン）
 %%bash
-sudo docker exec sql17cu16 /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U sa -P P@ssw0rd -Q 'select @@version'
+sudo docker exec sql17cu16 /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U sa -P $PASSWORD -Q 'select @@version'
 
 #%% [markdown]
 # ## 1-4.コンテナ外でsqlcmd（ホストの11433ポートはコンテナの1433にマッピング）
 %%bash
-sqlcmd -S localhost,11433 -U sa -P P@ssw0rd -Q 'select @@version'
+sqlcmd -S localhost,11433 -U sa -P $PASSWORD -Q 'select @@version'
 
 #%% [markdown]
 # ## 1-5.DevDB作成
 %%bash
-sqlcmd -S localhost,11433 -U sa -P P@ssw0rd -Q 'create database DevDB'
-sqlcmd -S localhost,11433 -U sa -P P@ssw0rd -Q 'use DevDB; create table tab01(id int, name varchar(max)); insert into tab01 values (1, "SQL Server runs on Docker!")'
-sqlcmd -S localhost,11433 -U sa -P P@ssw0rd -Q 'select name from sys.databases; use DevDB; select * from tab01'
+sqlcmd -S localhost,11433 -U sa -P $PASSWORD -Q 'create database DevDB'
+sqlcmd -S localhost,11433 -U sa -P $PASSWORD -Q 'use DevDB; create table tab01(id int, name varchar(max)); insert into tab01 values (1, "SQL Server runs on Docker!")'
+sqlcmd -S localhost,11433 -U sa -P $PASSWORD -Q 'select name from sys.databases; use DevDB; select * from tab01'
 
 #%% [markdown]
 # ## 1-6.コンテナ内にDBファイルが作成された
@@ -63,37 +63,46 @@ sudo docker exec sql17cu16 ls -la /var/opt/mssql/data | grep DevDB
 ls -la ~/SQL_Server_Container/DataVolume/data | grep DevDB
 
 #%% [markdown]
-# ## 1-8.コンテナ停止してもホストボリューム上のDBファイルは消えない
+# ## 1-8.コンテナ停止
 %%bash
 sudo docker stop sql17cu16
 sudo docker ps -a --filter name=sql17cu16
+
+#%% [markdown]
+# ## 1-9.コンテナ停止してもホストボリューム上のDBファイルは消えない
+%%bash
 ls -la ~/SQL_Server_Container/DataVolume/data | grep DevDB
 
 #%% [markdown]
-# ## 1-9.コンテナ破棄してもホストボリューム上のDBファイルは消えない
+# ## 1-10.コンテナ破棄
 %%bash
 sudo docker rm -f sql17cu16
 sudo docker ps -a --filter name=sql17cu16
-ls -la ~/SQL_Server_Container/DataVolume/data | grep DevDB
 
+#%% [markdown]
+# ## 1-11.コンテナ破棄してもホストボリューム上のDBファイルは消えない
+%%bash
+ls -la ~/SQL_Server_Container/DataVolume/data | grep DevDB
 
 #%% [markdown]
 # # Demo 2: Docker コンテナ内での操作
 # ## 2-1.SQL Server 2017コンテナ起動
 %%bash
-sudo docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=P@ssw0rd' -p 11433:1433 -v ~/SQL_Server_Container/DataVolume:/var/opt/mssql --name sql17cu16 -d mcr.microsoft.com/mssql/server:2017-CU16
+sudo docker run -e ACCEPT_EULA=Y -e MSSQL_SA_PASSWORD=$PASSWORD -p 11433:1433 -v ~/SQL_Server_Container/DataVolume:/var/opt/mssql --name sql17cu16 -d mcr.microsoft.com/mssql/server:2017-CU16
 sudo docker ps -a --filter name=sql17cu16
 sleep 30
 
 #%% [markdown]
 # ## 2-2.コンテナ接続
 # sudo docker exec -it sql17cu16 /bin/bash
+
+#%% [markdown]
 # ## 2-3.コンテナ内でmssql-cliインストール
-# > apt-get update
-# > apt-get install mssql-cli
+# apt-get update
+# apt-get install mssql-cli
 # ![](image/2019-10-08-23-26-04.png)
-# > which mssql-cli
-# > mssql-cli -S localhost -U sa -P P@ssw0rd
+# which mssql-cli
+# mssql-cli -S localhost -U sa -P $PASSWORD
 # ![](image/2019-10-08-23-29-40.png)
 
 #%% [markdown]
@@ -117,7 +126,7 @@ sudo docker image list | grep 2019-RC1
 #%% [markdown]
 # ## 3-2.SQL Server2019コンテナ起動（SQL Server 2017で作成したデータファイルをマウント）
 %%bash
-sudo docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=P@ssw0rd' -p 11433:1433 -v ~/SQL_Server_Container/DataVolume:/var/opt/mssql --name sql19rc1 -d mcr.microsoft.com/mssql/server:2019-RC1
+sudo docker run -e ACCEPT_EULA=Y -e MSSQL_SA_PASSWORD=$PASSWORD -p 11433:1433 -v ~/SQL_Server_Container/DataVolume:/var/opt/mssql --name sql19rc1 -d mcr.microsoft.com/mssql/server:2019-RC1
 sudo docker ps -a --filter name=sql19rc1
 sleep 30
 
@@ -125,24 +134,24 @@ sleep 30
 # ## 3-3.SQL Server に接続すると”Upgrade中だから待て”のエラー
 # ### Sqlcmd: Error: Microsoft ODBC Driver 17 for SQL Server : Login failed for user 'sa'. Reason: Server is in script upgrade mode. Only administrator can connect at this time..
 %%bash
-sudo docker exec sql19rc1 /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P P@ssw0rd -Q 'select @@version'
+sudo docker exec sql19rc1 /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $PASSWORD -Q 'select @@version'
 
 #%% [markdown]
-# ## 3-4.アップグレードが終われば接続できるようになる
+# ## 3-4.アップグレードが終われば接続できるようになる(数分かかる)
 # ### Microsoft SQL Server 2019 (RC1) - 15.0.1900.25 (X64)
 %%bash
-sudo docker exec sql19rc1 /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P P@ssw0rd -Q 'select @@version'
+sudo docker exec sql19rc1 /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $PASSWORD -Q 'select @@version'
 
 #%% [markdown]
 # ## 3-5.SQL Server 2017から2019にアップグレードしたDBをSELECT
 %%bash
-sqlcmd -S localhost,11433 -U sa -P P@ssw0rd -Q 'use DevDB; select * from tab01'
+sqlcmd -S localhost,11433 -U sa -P $PASSWORD -Q 'use DevDB; select * from tab01'
 
 #%% [markdown]
 # # Demo 4: SQL Server コンテナ内のDBバックアップ
 # ## 4-1.フルバックアップ
 %%bash
-sqlcmd -S localhost,11433 -U sa -P P@ssw0rd -Q 'backup database DevDB to disk="/tmp/DevDB.bak" with format'
+sqlcmd -S localhost,11433 -U sa -P $PASSWORD -Q 'backup database DevDB to disk="/tmp/DevDB.bak" with format'
 sudo docker exec sql19rc1 ls -la /tmp/DevDB.bak
 
 #%% [markdown]
@@ -170,7 +179,7 @@ echo 'CMD ["/opt/mssql/bin/sqlservr"]' >> Dockerfile
 cat Dockerfile
 
 #%% [markdown]
-# ## 5-2.カスタムコンテナイメージのビルド
+# ## 5-2.カスタムコンテナイメージのビルド(数十秒かかる)
 %%bash
 cd ~/SQL_Server_Container
 sudo docker build -t localhost:5000/mssql/devdb:v1 .
@@ -202,7 +211,7 @@ sudo docker image list
 #%% [markdown]
 # ## 5-7.ローカルプライベートレジストリから Pull & Run
 %%bash
-sudo docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=P@ssw0rd' -p 11433:1433 -v ~/SQL_Server_Container/DataVolume:/var/opt/mssql --name sql19rc1 -d localhost:5000/mssql/devdb:v1
+sudo docker run -e ACCEPT_EULA=Y -e MSSQL_SA_PASSWORD=$PASSWORD -p 11433:1433 -v ~/SQL_Server_Container/DataVolume:/var/opt/mssql --name sql19rc1 -d localhost:5000/mssql/devdb:v1
 sudo docker ps -a --filter name=sql19rc1
 sudo docker image list | grep devdb
 
@@ -215,17 +224,17 @@ sudo docker exec sql19rc1 ls -l /tmp
 # # Demo 6: SQL Server カスタムコンテナへのDBリストア
 # ## 6-1.SELECT（リストア前）
 %%bash
-sqlcmd -S localhost,11433 -U sa -P P@ssw0rd -Q 'use DevDB; select * from tab01'
+sqlcmd -S localhost,11433 -U sa -P $PASSWORD -Q 'use DevDB; select * from tab01'
 
 #%% [markdown]
 # ## 6-2.リストア
 %%bash
-sqlcmd -S localhost,11433 -U sa -P P@ssw0rd -Q 'RESTORE DATABASE [DevDB] FROM DISK = "/tmp/DevDB.bak"'
+sqlcmd -S localhost,11433 -U sa -P $PASSWORD -Q 'RESTORE DATABASE [DevDB] FROM DISK = "/tmp/DevDB.bak"'
 
 #%% [markdown]
 # ## 6-3.SELECT
 %%bash
-sqlcmd -S localhost,11433 -U sa -P P@ssw0rd -Q 'use DevDB; select * from tab01'
+sqlcmd -S localhost,11433 -U sa -P $PASSWORD -Q 'use DevDB; select * from tab01'
 
 #%% [markdown]
 # # Demo 7: AutoTuning
@@ -234,7 +243,7 @@ sqlcmd -S localhost,11433 -U sa -P P@ssw0rd -Q 'use DevDB; select * from tab01'
 %%bash
 sudo docker restart sqlautotune
 sleep 10
-sqlcmd -S localhost,61433 -U sa -P P@ssw0rd \
+sqlcmd -S localhost,61433 -U sa -P $PASSWORD \
   -i ~/SQL_Server_Container/SQL_Server_Autotune/2.init_autotune_off.sql
 
 #%% [markdown]
@@ -269,7 +278,7 @@ sqlcmd -S localhost,61433 -U sa -P P@ssw0rd \
 %%bash
 sudo docker restart sqlautotune
 sleep 10
-sqlcmd -S localhost,61433 -U sa -P P@ssw0rd \
+sqlcmd -S localhost,61433 -U sa -P $PASSWORD \
   -i ~/SQL_Server_Container/SQL_Server_Autotune/2.init_autotune_on.sql
 
 #%% [markdown]
@@ -299,6 +308,15 @@ sqlcmd -S localhost,61433 -U sa -P P@ssw0rd \
 # ![](image/2019-10-10-00-14-19.png)
 
 #%% [markdown]
-# # コンテンツアップロード
-%%bash
-#scp -r ~/OneDrive/Tech/Sample/Public/SampleCode/SQL_Server_Container user@host:/home/o9o9/jupyter/SampleCode/SQL_Server_Container
+# # Jupyterにコンテンツアップロード
+# rsync -a --stats --progress ~/OneDrive/Tech/Sample/Public/SampleCode/SQL_Server_Container user@host:/home/o9o9/Jupyter/
+## onedrive --synchronize --download-only --single-directory 'Tech/Sample/Public/SampleCode'
+## scp -r ~/OneDrive/Tech/Sample/Public/SampleCode/SQL_Server_Container user@host:/home/o9o9/jupyter/SampleCode/
+
+# # GitHubにPush
+# cd ~/OneDrive/Tech/Sample/Public/SampleCode/SQL_Server_Container
+# git add.
+# git commit -m "commit"
+# git push origin master
+
+
