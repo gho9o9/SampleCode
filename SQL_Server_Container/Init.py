@@ -101,8 +101,8 @@ rm /tmp/WideWorldImporters-Full.bak
 %%bash
 cd ~/SQL_Server_Container
 # apt instal subversion
-sudo rm -rf ~/SQL_Server_Container/SQL_Server_Autotune
-svn export https://github.com/gho9o9/SampleCode/trunk/SQL_Server_Autotune
+# sudo rm -rf ~/SQL_Server_Container/SQL_Server_Autotune
+svn export --force https://github.com/gho9o9/SampleCode/trunk/SQL_Server_Autotune
 
 #%% [markdown]
 # ### 1-2-4.テストデータリストア
