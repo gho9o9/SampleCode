@@ -239,7 +239,7 @@ sqlcmd -S localhost,11433 -U sa -P $PASSWORD -Q 'use DevDB; select * from tab01'
 #%% [markdown]
 # # Demo 7: AutoTuning
 # ## 7-1.手動チューニング
-# ### 7-1-1.初期化
+# ### 7-1-1.初期化(クエリストアクリア＆自動チューニング無効化)
 %%bash
 sudo docker restart sqlautotune
 sleep 10
@@ -247,28 +247,53 @@ sqlcmd -S localhost,61433 -U sa -P $PASSWORD \
   -i ~/SQL_Server_Container/SQL_Server_Autotune/2.init_autotune_off.sql
 
 #%% [markdown]
-# ### 7-1-2.スループット収集
+# ### 7-1-2.データ分布確認
+%load_ext sql
+%sql mssql+pyodbc://sa:$PASSWORD@localhost,61433/master?DRIVER={ODBC+Driver+17+for+SQL+Server}
+%sql use demodb;  \
+SELECT \
+	[PackageTypeID], \
+	count(*) as RecCnt \
+FROM \
+	[Sales].[OrderLines] \
+GROUP BY \
+	[PackageTypeID] \
+ORDER BY \
+	[PackageTypeID]
+
+#%% [markdown]
+# ### 7-1-3.スループット収集(1秒おきにBatch Requests/secを収集し一時表に格納し続ける)
 # Azure Data Studio で 3.batchrequests_perf_collector.sql を実行
 # ![](image/2019-10-09-23-38-20.png)
-# ### 7-1-3.ワークロード実行
+# ### 7-1-4.ワークロード実行(SELECT hoge FROM [Sales].[OrderLines] WHERE [PackageTypeID] = 7 のSELECTをループ実行)
 # Azure Data Studio で 4.report.sql を実行
 # ![](image/2019-10-09-23-39-50.png)
-# ### 7-1-4.スループット推移確認
+# ### 7-1-5.スループット推移確認
 # Azure Data Studio で 5.batchrequests.sql を実行
 # ![](image/2019-10-09-23-41-41.png)
-# ### 7-1-5.パラメータスニッフィング問題発生
+# ### 7-1-6.現在のクエリプラン確認（フルスキャンになっていることを確認）
+# Azure Data Studio で get_query_plan.sql を実行
+# ![](image/2019-10-24-16-55-04.png)
+# ### 7-1-7.パラメータスニッフィングを誘発（プランキャッシュクリア後にSELECT hoge FROM [Sales].[OrderLines] WHERE [PackageTypeID] = 1 のSELECT）
 # Azure Data Studio で 6.regression.sql を実行
 # ![](image/2019-10-09-23-42-59.png)
-# ### 7-1-6.スループット推移確認(7-1-4に比較しスローダウンしていることを確認)
+# ### 7-1-8.スループット推移確認(7-1-5に比較し[PackageTypeID] = 7のSELECTがスローダウンしていることを確認)
 # Azure Data Studio で 5.batchrequests.sql を実行
 # ![](image/2019-10-09-23-44-53.png)
-# ### 7-1-7.チューニングの推奨を確認
+# ### 7-1-9.現在のクエリプラン確認（インデックスシーク＆キールックアップのプランに変更されていることを確認）
+# Azure Data Studio で get_query_plan.sql を実行
+# ![](image/2019-10-24-17-00-17.png)
+# ### 7-1-10.クエリストア確認（2つのプランが存在することを確認）
+# ![](image/2019-10-24-17-03-29.png)
+# ### 7-1-11.チューニングの推奨を確認
 # Azure Data Studio で 7.recommendations.sql を実行
 # ![](image/2019-10-09-23-45-58.png)
-# ### 7-1-8.推奨を手動適用
+# ### 7-1-12.推奨を手動適用
 # Azure Data Studio で 8.manual_tune.sql を実行
 # ![](image/2019-10-09-23-47-10.png)
-# ### 7-1-9.スループット推移確認(スループットの改善を確認)
+# ### 7-1-13.クエリストア確認（[PackageTypeID] = 7のSELECTに最適なプランが選択されていることを確認）
+# ![](image/2019-10-24-17-07-43.png)
+# ### 7-1-14.スループット推移確認(スループットの改善を確認)
 # Azure Data Studio で 5.batchrequests.sql を実行
 # ![](image/2019-10-09-23-48-57.png)
 
@@ -282,16 +307,16 @@ sqlcmd -S localhost,61433 -U sa -P $PASSWORD \
   -i ~/SQL_Server_Container/SQL_Server_Autotune/2.init_autotune_on.sql
 
 #%% [markdown]
-# ### 7-2-2.スループット収集
+# ### 7-2-2.スループット収集(1秒おきにBatch Requests/secを収集し一時表に格納し続ける)
 # Azure Data Studio で 3.batchrequests_perf_collector.sql を実行
 # ![](image/2019-10-09-23-38-20.png)
-# ### 7-2-3.ワークロード実行
+# ### 7-2-3.ワークロード実行(SELECT hoge FROM [Sales].[OrderLines] WHERE [PackageTypeID] = 7 のSELECTをループ実行)
 # Azure Data Studio で 4.report.sql を実行
 # ![](image/2019-10-09-23-39-50.png)
 # ### 7-2-4.スループット推移確認
 # Azure Data Studio で 5.batchrequests.sql を実行
 # ![](image/2019-10-09-23-56-40.png)
-# ### 7-2-5.パラメータスニッフィング問題発生
+# ### 7-2-5.パラメータスニッフィングを誘発（プランキャッシュクリア後にSELECT hoge FROM [Sales].[OrderLines] WHERE [PackageTypeID] = 1 のSELECT）
 # Azure Data Studio で 6.regression.sql を実行
 # ![](image/2019-10-09-23-42-59.png)
 # ### 7-2-6.スループット推移確認(7-2-4に比較しスローダウンしていることを確認)
@@ -300,7 +325,7 @@ sqlcmd -S localhost,61433 -U sa -P $PASSWORD \
 # ### 7-1-7.チューニングの推奨を確認
 # Azure Data Studio で 7.recommendations.sql を実行
 # ![](image/2019-10-09-23-59-43.png)
-# ### 7-2-8.スループット推移確認(スループットの改善を確認)
+# ### 7-2-8.スループット推移確認(自動チューニングが機能しスループットが自動的に改善していることを確認)
 # Azure Data Studio で 5.batchrequests.sql を実行
 # ![](image/2019-10-10-00-17-54.png)
 # ### 7-2-9.スループット推移確認([Reverted](https://docs.microsoft.com/ja-jp/sql/relational-databases/system-dynamic-management-views/sys-dm-db-tuning-recommendations-transact-sql?view=sql-server-2017#remarks)となるケースもあり)
@@ -315,7 +340,7 @@ sqlcmd -S localhost,61433 -U sa -P $PASSWORD \
 
 # # GitHubにPush
 # cd ~/OneDrive/Tech/Sample/Public/SampleCode/SQL_Server_Container
-# git add.
+# git add .
 # git commit -m "commit"
 # git push origin master
 
