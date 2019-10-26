@@ -339,16 +339,5 @@ sqlcmd -S localhost,61433 -U sa -P $PASSWORD \
 # Azure Data Studio で 5.batchrequests.sql を実行
 # ![](image/2019-10-10-00-14-19.png)
 
-#%% [markdown]
-# # Jupyterにコンテンツアップロード
-# rsync -a --stats --progress ~/OneDrive/Tech/Sample/Public/SampleCode/SQL_Server_Container user@host:/home/o9o9/Jupyter/
-## onedrive --synchronize --download-only --single-directory 'Tech/Sample/Public/SampleCode'
-## scp -r ~/OneDrive/Tech/Sample/Public/SampleCode/SQL_Server_Container user@host:/home/o9o9/jupyter/SampleCode/
-
-# # GitHubにPush
-# cd ~/OneDrive/Tech/Sample/Public/SampleCode/SQL_Server_Container
-# git add .
-# git commit -m "commit"
-# git push origin master
 
 
