@@ -97,7 +97,14 @@ sleep 30
 # sudo docker exec -it sql17cu16 /bin/bash
 
 #%% [markdown]
-# ## 2-3.コンテナ内でmssql-cliインストール
+# ## 2-3.コンテナ内でOS使用感を確認（いくつかのOSコマンド実行）
+# df
+# ls -la /etc/ | grep release
+# cat /etc/lsb-release
+# ![](image/2019-10-26-10-25-36.png)
+
+#%% [markdown]
+# ## 2-4.コンテナ内でパッケージインストール（mssql-cliインストール）
 # apt-get update
 # apt-get install mssql-cli
 # ![](image/2019-10-08-23-26-04.png)
@@ -106,12 +113,12 @@ sleep 30
 # ![](image/2019-10-08-23-29-40.png)
 
 #%% [markdown]
-# ## 2-4.ホスト側にはmssql-cliは存在しない
+# ## 2-5.ホスト側にはmssql-cliは存在しない
 # /usr/bin/mssql-cli
 # ![](image/2019-10-08-23-36-07.png)
 
 #%% [markdown]
-# ## 2-5.コンテナ破棄
+# ## 2-6.コンテナ破棄
 %%bash
 sudo docker rm -f sql17cu16
 sudo docker ps -a --filter name=sql17cu16
@@ -332,5 +339,16 @@ sqlcmd -S localhost,61433 -U sa -P $PASSWORD \
 # Azure Data Studio で 5.batchrequests.sql を実行
 # ![](image/2019-10-10-00-14-19.png)
 
+#%% [markdown]
+# # Jupyterにコンテンツアップロード
+# rsync -a --stats --progress ~/OneDrive/Tech/Sample/Public/SampleCode/SQL_Server_Container user@host:/home/o9o9/Jupyter/
+## onedrive --synchronize --download-only --single-directory 'Tech/Sample/Public/SampleCode'
+## scp -r ~/OneDrive/Tech/Sample/Public/SampleCode/SQL_Server_Container user@host:/home/o9o9/jupyter/SampleCode/
+
+# # GitHubにPush
+# cd ~/OneDrive/Tech/Sample/Public/SampleCode/SQL_Server_Container
+# git add .
+# git commit -m "commit"
+# git push origin master
 
 
