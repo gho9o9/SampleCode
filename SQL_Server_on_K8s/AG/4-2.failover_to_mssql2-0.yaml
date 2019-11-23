@@ -7,11 +7,11 @@ kind: Role
 metadata: {name: manual-failover, namespace: mssql-ag}
 rules:
 - apiGroups: ['']
-  resourceNames: [ag]
+  resourceNames: [mssql-ag]
   resources: [configmaps]
   verbs: [get, update]
 - apiGroups: ['']
-  resourceNames: [ag]
+  resourceNames: [mssql-ag]
   resources: [endpoints]
   verbs: [get]
 - apiGroups: ['']
@@ -35,7 +35,7 @@ spec:
       containers:
       - command: [/mssql-server-k8s-failover]
         env:
-        - {name: MSSQL_K8S_AG_NAME, value: ag}
+        - {name: MSSQL_K8S_AG_NAME, value: mssql-ag}
         - {name: MSSQL_K8S_NEW_PRIMARY, value: mssql2-0}
         - name: MSSQL_K8S_NAMESPACE
           valueFrom:
