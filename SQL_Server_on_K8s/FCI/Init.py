@@ -1,12 +1,28 @@
 
-# # 4. FCI用のnamespaceとsecret作成
+#%% [markdown]
+# # 1. FCI用のnamespace作成
+%%bash
 kubectl create namespace mssql-fci
-kubectl create secret generic mssql --from-literal=SA_PASSWORD=$PASSWORD -n mssql-fci
-
-# # 5. AG用のnamespaceとsecret作成
-⭐️
 
 #%% [markdown]
-# # 6. SQL Server 2019 Big Data Cluster 作成
+# # 2. FCI用のsecret作成
 %%bash
-azdata bdc create --accept-eula yes
+kubectl create secret generic mssql --from-literal=SA_PASSWORD=$PASSWORD -n mssql-fci
+
+#%% [markdown]
+# # 3. PVC作成
+%%bash
+cat ~/Jupyter/SQL_Server_on_K8s/FCI/pvc.yaml
+#%%
+%%bash
+kubectl apply -f ~/Jupyter/SQL_Server_on_K8s/FCI/pvc.yaml -n mssql-fci
+
+#%% [markdown]
+# # 4. Pod作成
+%%bash
+cat ~/Jupyter/SQL_Server_on_K8s/FCI/sql19deployment.yaml
+#%%
+%%bash
+kubectl apply -f ~/Jupyter/SQL_Server_on_K8s/FCI/sql19deployment.yaml -n mssql-fci
+
+# %%

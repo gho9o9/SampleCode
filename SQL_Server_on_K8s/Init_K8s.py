@@ -1,4 +1,10 @@
 
+# コンテンツ最新化（Run on Mac）
+rsync -a --stats --progress ~/OneDrive/Tech/Sample/Public/SampleCode/SQL_Server_on_K8s user@host:/home/o9o9/Jupyter/
+cd ~/OneDrive/Tech/Sample/Public/SampleCode/SQL_Server_on_K8s
+git add .
+git commit -m "commit"
+git push origin master
 
 #%% [markdown]
 # # 1.K8s作成
