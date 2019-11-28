@@ -131,13 +131,3 @@ kubectl get pod -o wide -n mssql-fci
 %%bash
 sqlcmd -S 13.78.16.71 -U sa -P $PASSWORD  -Q 'use FCIDB; select * from tab01'
 
-
-#%%
-M-x shell
-C-x o
-C-x 0
-C-x 2
-C-u M-x shell -> shell2
-C-x o
-C-x o
-C-x 0
