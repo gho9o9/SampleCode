@@ -95,15 +95,15 @@ kubectl describe service -n mssql-fci
 # # 4. SQL接続テスト
 #%%
 %%bash
-kubectl exec mssql-deployment-79fdff6b95-mbwlh -c mssql -n mssql-fci -- /opt/mssql-tools/bin/sqlcmd -U sa -P $PASSWORD -Q 'SELECT @@VERSION'
+kubectl exec mssql-deployment-79fdff6b95-7jnt8 -c mssql -n mssql-fci -- /opt/mssql-tools/bin/sqlcmd -U sa -P $PASSWORD -Q 'SELECT @@VERSION'
 #%%
 %%bash
-sqlcmd -S 13.78.16.71 -U sa -P $PASSWORD  -Q 'select @@version'
+sqlcmd -S 52.185.169.168 -U sa -P $PASSWORD  -Q 'select @@version'
 #%%
 %%bash
-sqlcmd -S 13.78.16.71 -U sa -P $PASSWORD  -Q 'create database FCIDB'
-sqlcmd -S 13.78.16.71 -U sa -P $PASSWORD  -Q 'use FCIDB; create table tab01(id int, name varchar(max)); insert into tab01 values (1, "SQL Server runs on K8s!")'
-sqlcmd -S 13.78.16.71 -U sa -P $PASSWORD  -Q 'use FCIDB; select * from tab01'
+sqlcmd -S 52.185.169.168 -U sa -P $PASSWORD  -Q 'create database FCIDB'
+sqlcmd -S 52.185.169.168 -U sa -P $PASSWORD  -Q 'use FCIDB; create table tab01(id int, name varchar(max)); insert into tab01 values (1, "SQL Server runs on K8s!")'
+sqlcmd -S 52.185.169.168 -U sa -P $PASSWORD  -Q 'use FCIDB; select * from tab01'
 
 #%%
 #kubectl exec mssql-deployment-79fdff6b95-ldwps -c mssql -n mssql-fci -- /opt/mssql-tools/bin/sqlcmd -U sa -P $PASSWORD -Q 'create database FCIDB'
@@ -121,7 +121,7 @@ kubectl get pod -o wide -n mssql-fci
 
 #%%
 %%bash
-kubectl delete pod mssql-deployment-79fdff6b95-mbwlh -n mssql-fci
+kubectl delete pod mssql-deployment-79fdff6b95-7jnt8 -n mssql-fci
 
 #%%
 %%bash
@@ -129,5 +129,18 @@ kubectl get pod -o wide -n mssql-fci
 
 #%%
 %%bash
-sqlcmd -S 13.78.16.71 -U sa -P $PASSWORD  -Q 'use FCIDB; select * from tab01'
+sqlcmd -S 52.185.169.168 -U sa -P $PASSWORD  -Q 'use FCIDB; select * from tab01'
+#%%
+%%bash
+sqlcmd -S 52.185.169.168 -U sa -P $PASSWORD  -Q 'use master; drop database FCIDB'
 
+
+#%%
+M-x shell
+C-x o
+C-x 0
+C-x 2
+C-u M-x shell -> shell2
+C-x o
+C-x o
+C-x 0

@@ -72,13 +72,13 @@ kubectl get service -o wide -n mssql-ag
 # # 6. AG確認（DMV）
 #%%
 %%bash
-sqlcmd -S 52.155.111.133 -U sa -P $PASSWORD -Q 'select r.replica_server_name, rs.is_primary_replica, rs.synchronization_health_desc FROM sys.dm_hadr_database_replica_states rs JOIN sys.availability_replicas r ON r.group_id = rs.group_id AND r.replica_id = rs.replica_id'
+sqlcmd -S 52.140.224.121 -U sa -P $PASSWORD -Q 'select r.replica_server_name, rs.is_primary_replica, rs.synchronization_health_desc FROM sys.dm_hadr_database_replica_states rs JOIN sys.availability_replicas r ON r.group_id = rs.group_id AND r.replica_id = rs.replica_id'
 #%%
 %%bash
-sqlcmd -S 52.155.111.133 -U sa -P $PASSWORD -Q 'select @@servername'
+sqlcmd -S 52.140.224.121 -U sa -P $PASSWORD -Q 'select @@servername'
 #%%
 %%bash
-sqlcmd -S 13.71.153.144 -U sa -P $PASSWORD -Q 'select @@servername'
+sqlcmd -S 20.188.14.212 -U sa -P $PASSWORD -Q 'select @@servername'
 
 #%% [markdown]
 # # 6. AG確認（SSMS）
@@ -95,16 +95,16 @@ az aks browse -g rg_bdc --listen-address 0.0.0.0 -n o9o9aks
 # # 7.セカンダリから接続（ReadOnlyでないとエラーになる）
 #%%
 %%bash
-sqlcmd -S 13.71.153.144 -U sa -P $PASSWORD -Q 'use agdb; select * from tab01'
+sqlcmd -S 20.188.14.212 -U sa -P $PASSWORD -Q 'use agdb; select * from tab01'
 #%%
 %%bash
-sqlcmd -S 13.71.153.144 -U sa -P $PASSWORD -Q 'use agdb; select * from tab01' -K READONLY
+sqlcmd -S 20.188.14.212 -U sa -P $PASSWORD -Q 'use agdb; select * from tab01' -K READONLY
 
 #%% [markdown]
 # # 8. AGの機能でフェールオーバー（エラーになる）
 #%%
 %%bash
-sqlcmd -S 52.155.111.133 -U sa -P $PASSWORD -Q 'ALTER AVAILABILITY GROUP agdb FAILOVER'
+sqlcmd -S 52.140.224.121 -U sa -P $PASSWORD -Q 'ALTER AVAILABILITY GROUP agdb FAILOVER'
 
 #%% [markdown]
 # # 9. K8sのJobでフェールオーバー
@@ -121,13 +121,13 @@ kubectl get jobs -n mssql-ag
 # # 10. AG確認
 #%%
 %%bash
-sqlcmd -S 52.155.111.133 -U sa -P $PASSWORD -Q 'select r.replica_server_name, rs.is_primary_replica, rs.synchronization_health_desc FROM sys.dm_hadr_database_replica_states rs JOIN sys.availability_replicas r ON r.group_id = rs.group_id AND r.replica_id = rs.replica_id'
+sqlcmd -S 52.140.224.121 -U sa -P $PASSWORD -Q 'select r.replica_server_name, rs.is_primary_replica, rs.synchronization_health_desc FROM sys.dm_hadr_database_replica_states rs JOIN sys.availability_replicas r ON r.group_id = rs.group_id AND r.replica_id = rs.replica_id'
 #%%
 %%bash
-sqlcmd -S 52.155.111.133 -U sa -P $PASSWORD -Q 'select @@servername'
+sqlcmd -S 52.140.224.121 -U sa -P $PASSWORD -Q 'select @@servername'
 #%%
 %%bash
-sqlcmd -S 13.71.153.144 -U sa -P $PASSWORD -Q 'select @@servername'
+sqlcmd -S 52.140.224.121 -U sa -P $PASSWORD -Q 'select @@servername'
 
 #%% [markdown]
 # # （11. F/Oジョブの削除）
@@ -147,6 +147,6 @@ kubectl get jobs -n mssql-ag
 %%bash
 kubectl apply -f ~/Jupyter/SQL_Server_on_K8s/AG/4-1.failover_to_mssql1-0.yaml -n mssql-ag
 kubectl get jobs -n mssql-ag
-sqlcmd -S 52.155.111.133 -U sa -P $PASSWORD -Q 'select r.replica_server_name, rs.is_primary_replica, rs.synchronization_health_desc FROM sys.dm_hadr_database_replica_states rs JOIN sys.availability_replicas r ON r.group_id = rs.group_id AND r.replica_id = rs.replica_id'
+sqlcmd -S 52.140.224.121 -U sa -P $PASSWORD -Q 'select r.replica_server_name, rs.is_primary_replica, rs.synchronization_health_desc FROM sys.dm_hadr_database_replica_states rs JOIN sys.availability_replicas r ON r.group_id = rs.group_id AND r.replica_id = rs.replica_id'
 kubectl delete -f ~/Jupyter/SQL_Server_on_K8s/AG/4-1.failover_to_mssql1-0.yaml -n mssql-ag
 kubectl get jobs -n mssql-ag
