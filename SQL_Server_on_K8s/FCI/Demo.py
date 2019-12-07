@@ -134,6 +134,10 @@ sqlcmd -S 52.185.169.168 -U sa -P $PASSWORD  -Q 'use FCIDB; select * from tab01'
 %%bash
 sqlcmd -S 52.185.169.168 -U sa -P $PASSWORD  -Q 'use master; drop database FCIDB'
 
+#%% [markdown]
+# ノードF/OでCloud ProviderのPVCの引継ぎが失敗する
+# https://github.com/kubernetes/kubernetes/issues/80040#issuecomment-527600684
+# https://github.com/kubernetes/enhancements/pull/1116
 
 #%%
 M-x shell
