@@ -8,26 +8,15 @@ azdata bdc create --accept-eula yes
 %%bash
 cd ~/Jupyter/SQL_Server_on_K8s/BDC
 # apt instal subversion
-svn export --force https://github.com/microsoft/MCW-Modernizing-Data-Analytics-with-SQL-Server-2019/tree/master/Hands-on%20lab/Resources
+svn export --force https://github.com/microsoft/MCW-Modernizing-Data-Analytics-with-SQL-Server-2019/trunk/Hands-on%20lab/Resources
 
 
 #%% [markdown]
 # # デモ環境構築（[参考](https://github.com/microsoft/MCW-Modernizing-Data-Analytics-with-SQL-Server-2019/blob/master/Hands-on%20lab/Before%20the%20HOL%20-%20Modernizing%20Data%20Analytics%20with%20SQL%20Server%202019.md)）
 
 #%% [markdown]
-# ## デモ環境構築のためのリソースをダウンロード on Windows
-# %%ps
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-choco feature enable -n allowGlobalConfirmation
-choco install curl
-# %%cmd
+# ## サンプルDB作成 on Windows Admin Power Shell
 cd C:\Users\o9o9\OneDrive\Tech\Sample\Public\SampleCode\SQL_Server_on_K8s\BDC
-curl -o bootstrap-sample-db.cmd "https://raw.githubusercontent.com/Microsoft/sql-server-samples/master/samples/features/sql-big-data-cluster/bootstrap-sample-db.cmd"
-curl -o bootstrap-sample-db.sql "https://raw.githubusercontent.com/Microsoft/sql-server-samples/master/samples/features/sql-big-data-cluster/bootstrap-sample-db.sql"
-curl -o upload-sample-files.cmd "https://raw.githubusercontent.com/solliancenet/MCW-Modernizing-data-analytics-with-SQL-Server-2019/master/Hands-on%20lab/Resources/upload-sample-files.cmd"
-
-#%% [markdown]
-# ## サンプルDB作成 on Windows
 .\bootstrap-sample-db.cmd <CLUSTER_NAMESPACE> <SQL_MASTER_IP> <SQL_MASTER_LOGIN> <SQL_MASTER_SA_PASSWORD> <KNOX_IP> <KNOX_PASSWORD> --install-extra-samples
 # <CLUSTER_NAMESPACE>：kubectl get namespace
 # <SQL_MASTER_IP>：kubectl get service -n mssql-cluster | findstr 31433
@@ -37,7 +26,8 @@ curl -o upload-sample-files.cmd "https://raw.githubusercontent.com/solliancenet/
 # <KNOX_PASSWORD>：bdcインストール時に指定したもの
 
 #%% [markdown]
-# ## サンプルデータをHDFSに配置 on Windows
+# ## サンプルデータをHDFSに配置 on Windows Admin Power Shell
+cd C:\Users\o9o9\OneDrive\Tech\Sample\Public\SampleCode\SQL_Server_on_K8s\BDC
 .\upload-sample-files.cmd <KNOX_IP> <KNOX_PASSWORD>
 
 #%% [markdown]
