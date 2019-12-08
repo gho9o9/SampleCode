@@ -322,6 +322,15 @@ LOCATION = 'sqlserver://o9o9mssql.database.windows.net', \
 %sql SELECT TOP 10 * FROM [dbo].[web_clickstream_clicks_data_pool]
 ## %sql SELECT TOP 10 * FROM [dbo].[web_clickstreams_hdfs]
 
+
+
+
+### DMVクエリ
+### Sparkクエリ
+### HDFS階層化
+
+
+
 #%%
 # 参考
 #mssql+pyodbc://user:password@server/database?DRIVER={enty in /etc/odbcinst.ini}'
