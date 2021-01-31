@@ -1,0 +1,1 @@
+SELECT * INTO HumanCharacteristics_Backup FROM HumanCharacteristics
